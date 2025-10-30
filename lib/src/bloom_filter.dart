@@ -44,8 +44,7 @@ class BloomFilter<T> extends BloomFilterBase<T> {
 
   BloomFilter(this.expectedNumberOfElements, this.falsePositiveProbability) {
     // ceil(-log2(false prob))
-    numberOfHashes =
-        ((-(log(falsePositiveProbability) / log(2))).ceil()).toInt();
+    numberOfHashes = ((-(log(falsePositiveProbability) / log(2))).ceil()).toInt();
 
     // k/log(2)
     konstant = (-(log(falsePositiveProbability) / log(2))).ceil() / log(2);
@@ -56,11 +55,9 @@ class BloomFilter<T> extends BloomFilterBase<T> {
   }
 
   /// Bloom Filter that uses murmur hashing algorithm
-  BloomFilter.murmur(this.expectedNumberOfElements,
-      this.falsePositiveProbability, this.hashSeed) {
+  BloomFilter.murmur(this.expectedNumberOfElements, this.falsePositiveProbability, this.hashSeed) {
     // ceil(-log2(false prob))
-    numberOfHashes =
-        ((-(log(falsePositiveProbability) / log(2))).ceil()).toInt();
+    numberOfHashes = ((-(log(falsePositiveProbability) / log(2))).ceil()).toInt();
 
     // k/log(2)
     konstant = (-(log(falsePositiveProbability) / log(2))).ceil() / log(2);
@@ -106,15 +103,13 @@ class BloomFilter<T> extends BloomFilterBase<T> {
   /// and <object>.hashCode to as an input to murmur hash algo
   int getHash({required T item}) {
     if (murmur) {
-      return MurmurHash.v3(
-          item.toString() + item.hashCode.toString(), hashSeed);
+      return MurmurHash.v3(item.toString() + item.hashCode.toString(), hashSeed);
     } else {
       return item.hashCode;
     }
   }
 
-  factory BloomFilter.fromJson(Map<String, dynamic> json) =>
-      _$BloomFilterFromJson(json);
+  factory BloomFilter.fromJson(Map<String, dynamic> json) => _$BloomFilterFromJson(json);
 
   Map<String, dynamic> toJson() => _$BloomFilterToJson(this);
 }
