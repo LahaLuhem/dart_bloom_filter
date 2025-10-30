@@ -1,16 +1,29 @@
-// import 'package:bloom_filter/bloom_filter.dart';
-// import 'package:test/test.dart';
+import 'package:dart_bloom_filter/dart_bloom_filter.dart';
+import 'package:shouldly/shouldly.dart';
+import 'package:test/test.dart';
 
-// void main() {
-//   group('A group of tests', () {
-//     final awesome = Awesome();
+void main() {
+  group('Contains test', () {
+    final bloomFilter = BloomFilter<String>(10, 0.001)..addAll(items: _defaultItems);
 
-//     setUp(() {
-//       // Additional setup goes here.
-//     });
+    test('Element exists', () {
+      final doesContain = bloomFilter.contains(item: 'wifi');
+      doesContain.should.beTrue();
+    });
+    test('Element does not exist', () {
+      final doesContain = bloomFilter.contains(item: 'bluetooth');
+      doesContain.should.beFalse();
+    });
+  });
+}
 
-//     test('First Test', () {
-//       expect(awesome.isAwesome, isTrue);
-//     });
-//   });
-// }
+const _defaultItems = [
+  'roti',
+  'kapda',
+  'makaan',
+  'credit card',
+  'wifi',
+  'snacks',
+  'ghar ki roti',
+  'bahar ki boti',
+];
