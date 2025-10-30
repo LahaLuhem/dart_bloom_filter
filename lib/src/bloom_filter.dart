@@ -83,6 +83,31 @@ class BloomFilter<T> extends BloomFilterBase<T> {
     }
   }
 
+  @override
+  void merge(covariant BloomFilter<T> other) {
+    // Validate that the filters are compatible
+    assert(arraySize == other.arraySize, 'Cannot merge Bloom filters with different array sizes');
+    assert(
+      numberOfHashes == other.numberOfHashes,
+      'Cannot merge Bloom filters with different number of hash functions',
+    );
+    assert(murmur == other.murmur, 'Cannot merge Bloom filters using different hash algorithms');
+    assert(
+      !murmur || hashSeed == other.hashSeed,
+      'Cannot merge Bloom filters with different hash seeds',
+    );
+
+    // Merge the bit arrays using OR operation
+    for (var i = 0; i < arraySize; i++) {
+      if (other.bitArray[i]) {
+        bitArray.setBit(i);
+      }
+    }
+
+    // Update element count (this is an approximation since there might be overlaps)
+    numberOfElements += other.numberOfElements;
+  }
+
   /// returns false if the element is definitely not in among the added
   /// elements, returns true if it might be contained
   @override
