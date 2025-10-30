@@ -1,7 +1,7 @@
 /// Support for doing something awesome.
 ///
 /// More dartdocs go here.
-library dart_bloom_filter;
+library;
 
 export 'src/bloom_filter.dart';
 

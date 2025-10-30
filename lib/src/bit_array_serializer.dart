@@ -5,12 +5,8 @@ class BitArraySerializer extends JsonConverter<BitArray, String> {
   const BitArraySerializer();
 
   @override
-  BitArray fromJson(String json) {
-    return BitArray.parseBinary(json.split('').reversed.join(''));
-  }
+  BitArray fromJson(String json) => BitArray.parseBinary(json.split('').reversed.join());
 
   @override
-  String toJson(BitArray object) {
-    return object.toBinaryString();
-  }
+  String toJson(BitArray object) => object.toBinaryString();
 }

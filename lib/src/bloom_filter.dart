@@ -21,10 +21,10 @@ class BloomFilter<T> extends BloomFilterBase<T> {
   late int hashSeed;
 
   /// sets to true if murmur hash is being used
-  bool murmur = false;
+  var murmur = false;
 
   /// number of elements add to the filter since generation
-  int numberOfElements = 0;
+  var numberOfElements = 0;
 
   /// number of elements user is expecting to add to the filter
   final int expectedNumberOfElements;
@@ -32,7 +32,7 @@ class BloomFilter<T> extends BloomFilterBase<T> {
   /// expected false positive rate
   final double falsePositiveProbability;
 
-  int numberOfHashes = 1;
+  var numberOfHashes = 1;
 
   late double konstant;
 
@@ -44,7 +44,7 @@ class BloomFilter<T> extends BloomFilterBase<T> {
 
   BloomFilter(this.expectedNumberOfElements, this.falsePositiveProbability) {
     // ceil(-log2(false prob))
-    numberOfHashes = ((-(log(falsePositiveProbability) / log(2))).ceil()).toInt();
+    numberOfHashes = (-(log(falsePositiveProbability) / log(2))).ceil();
 
     // k/log(2)
     konstant = (-(log(falsePositiveProbability) / log(2))).ceil() / log(2);
@@ -57,7 +57,7 @@ class BloomFilter<T> extends BloomFilterBase<T> {
   /// Bloom Filter that uses murmur hashing algorithm
   BloomFilter.murmur(this.expectedNumberOfElements, this.falsePositiveProbability, this.hashSeed) {
     // ceil(-log2(false prob))
-    numberOfHashes = ((-(log(falsePositiveProbability) / log(2))).ceil()).toInt();
+    numberOfHashes = (-(log(falsePositiveProbability) / log(2))).ceil();
 
     // k/log(2)
     konstant = (-(log(falsePositiveProbability) / log(2))).ceil() / log(2);
@@ -78,9 +78,7 @@ class BloomFilter<T> extends BloomFilterBase<T> {
   /// returns false if the element is definitely not in among the added
   /// elements, returns true if it might be contained
   @override
-  bool contains({required T item}) {
-    return bitArray[getHash(item: item) % arraySize];
-  }
+  bool contains({required T item}) => bitArray[getHash(item: item) % arraySize];
 
   /// resets all bits to false
   @override
@@ -91,7 +89,7 @@ class BloomFilter<T> extends BloomFilterBase<T> {
 
   @override
   void addAll({required List<T> items}) {
-    for (T item in items) {
+    for (final item in items) {
       bitArray.setBit(getHash(item: item) % arraySize);
       numberOfElements++;
     }

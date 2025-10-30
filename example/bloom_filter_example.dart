@@ -14,7 +14,7 @@ void main() {
 
   final bloomy = BloomFilter.murmur(10, 0.001, 12345);
 
-  for (String item in items) {
+  for (final item in items) {
     print('Before Adding: is $item added? ${bloomy.contains(item: item)}');
     bloomy.add(item: item);
     print('After Adding: is $item added? ${bloomy.contains(item: item)}');
