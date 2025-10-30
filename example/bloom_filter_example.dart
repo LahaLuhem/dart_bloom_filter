@@ -12,7 +12,7 @@ void main() {
     'bahar ki boti'
   ];
 
-  final bloomy = BloomFilter.murmur(10, 0.001, 12345);
+  final bloomy = BloomFilter<String>.murmur(10, 0.001, 12345);
 
   for (final item in items) {
     print('Before Adding: is $item added? ${bloomy.contains(item: item)}');

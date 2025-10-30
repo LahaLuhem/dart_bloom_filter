@@ -5,4 +5,4 @@ library;
 
 export 'src/bloom_filter.dart';
 
-// TODO: Export any libraries intended for clients of this package.
+// TODO(sigmapie8): Export any libraries intended for clients of this package.
