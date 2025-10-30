@@ -75,6 +75,14 @@ class BloomFilter<T> extends BloomFilterBase<T> {
     numberOfElements++;
   }
 
+  @override
+  void addAll({required List<T> items}) {
+    for (final item in items) {
+      bitArray.setBit(getHash(item: item) % arraySize);
+      numberOfElements++;
+    }
+  }
+
   /// returns false if the element is definitely not in among the added
   /// elements, returns true if it might be contained
   @override
@@ -85,14 +93,6 @@ class BloomFilter<T> extends BloomFilterBase<T> {
   void clear() {
     bitArray.clearAll();
     numberOfElements = 0;
-  }
-
-  @override
-  void addAll({required List<T> items}) {
-    for (final item in items) {
-      bitArray.setBit(getHash(item: item) % arraySize);
-      numberOfElements++;
-    }
   }
 
   /// [getHash] supports two methods for creating hashes:

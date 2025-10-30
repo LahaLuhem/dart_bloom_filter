@@ -9,7 +9,7 @@ void main() {
     'wifi',
     'snacks',
     'ghar ki roti',
-    'bahar ki boti'
+    'bahar ki boti',
   ];
 
   final bloomy = BloomFilter<String>.murmur(10, 0.001, 12345);
