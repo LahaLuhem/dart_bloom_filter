@@ -6,7 +6,7 @@ import 'heavy_object.dart';
 void main() {
   // 1_000_000_000 is infeasible for the Set-implementation while still feasible for Bloom-filters
   const testDataSize = 100_000_000;
-  final testData = Iterable.generate(testDataSize, (index) => index);
+  final testData = List.generate(testDataSize, (index) => index);
 
   group('Benchmark default Bloom-filter', () {
     final bloomFilter = BloomFilter<int>(testDataSize, 0.01);

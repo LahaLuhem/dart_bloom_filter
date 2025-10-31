@@ -70,7 +70,7 @@ final class BloomFilter<T> extends BloomFilterBase<T> {
   }
 
   @override
-  void addAll({required Iterable<T> items}) {
+  void addAll({required List<T> items}) {
     for (final item in items) {
       bitArray.setBit(_getHash(item: item) % arraySize);
       _numberOfElements++;
