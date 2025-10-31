@@ -10,21 +10,18 @@ import 'bloom_filter_base.dart';
 part 'bloom_filter.g.dart';
 
 @JsonSerializable()
-class BloomFilter<T> extends BloomFilterBase<T> {
+final class BloomFilter<T> extends BloomFilterBase<T> {
   @BitArraySerializer()
-  late BitArray bitArray;
+  late final BitArray bitArray;
 
   /// total size of the bit array
-  late int arraySize;
+  late final int arraySize;
 
   /// seed to be used for the hashing algorithm
-  late int hashSeed;
+  final int hashSeed;
 
   /// sets to true if murmur hash is being used
-  var murmur = false;
-
-  /// number of elements add to the filter since generation
-  var numberOfElements = 0;
+  final bool murmur;
 
   /// number of elements user is expecting to add to the filter
   final int expectedNumberOfElements;
@@ -32,54 +29,51 @@ class BloomFilter<T> extends BloomFilterBase<T> {
   /// expected false positive rate
   final double falsePositiveProbability;
 
-  var numberOfHashes = 1;
+  /// ceil(-log2(false prob))
+  final int numberOfHashes;
 
-  late double konstant;
+  /// number of elements add to the filter since generation
+  var _numberOfElements = 0;
 
   /// Returns the number of elements add to the filter since generation
-  int get length => numberOfElements;
+  int get length => _numberOfElements;
 
-  /// Returns the total size of the bit array in the filter
-  int get size => arraySize;
+  BloomFilter(
+    this.expectedNumberOfElements,
+    this.falsePositiveProbability, {
+    this.hashSeed = 0,
+    this.murmur = false,
+  }) : numberOfHashes = (-(log(falsePositiveProbability) / log(2))).ceil() {
+    final constant = (-(log(falsePositiveProbability) / log(2))).ceil() / log(2);
 
-  BloomFilter(this.expectedNumberOfElements, this.falsePositiveProbability) {
-    // ceil(-log2(false prob))
-    numberOfHashes = (-(log(falsePositiveProbability) / log(2))).ceil();
-
-    // k/log(2)
-    konstant = (-(log(falsePositiveProbability) / log(2))).ceil() / log(2);
-
-    arraySize = (konstant * expectedNumberOfElements).ceil();
-
+    arraySize = (constant * expectedNumberOfElements).ceil();
     bitArray = BitArray(arraySize);
   }
 
   /// Bloom Filter that uses murmur hashing algorithm
-  BloomFilter.murmur(this.expectedNumberOfElements, this.falsePositiveProbability, this.hashSeed) {
-    // ceil(-log2(false prob))
-    numberOfHashes = (-(log(falsePositiveProbability) / log(2))).ceil();
-
-    // k/log(2)
-    konstant = (-(log(falsePositiveProbability) / log(2))).ceil() / log(2);
-
-    arraySize = (konstant * expectedNumberOfElements).ceil();
-
-    bitArray = BitArray(arraySize);
-    murmur = true;
-  }
+  factory BloomFilter.murmur(
+    int expectedNumberOfElements,
+    double falsePositiveProbability,
+    int hashSeed,
+  ) => BloomFilter(
+    expectedNumberOfElements,
+    falsePositiveProbability,
+    hashSeed: hashSeed,
+    murmur: true,
+  );
 
   /// sets the required bit to true
   @override
   void add({required T item}) {
-    bitArray.setBit(getHash(item: item) % arraySize);
-    numberOfElements++;
+    bitArray.setBit(_getHash(item: item) % arraySize);
+    _numberOfElements++;
   }
 
   @override
   void addAll({required List<T> items}) {
     for (final item in items) {
-      bitArray.setBit(getHash(item: item) % arraySize);
-      numberOfElements++;
+      bitArray.setBit(_getHash(item: item) % arraySize);
+      _numberOfElements++;
     }
   }
 
@@ -105,34 +99,30 @@ class BloomFilter<T> extends BloomFilterBase<T> {
     }
 
     // Update element count (this is an approximation since there might be overlaps)
-    numberOfElements += other.numberOfElements;
+    _numberOfElements += other._numberOfElements;
   }
 
   /// returns false if the element is definitely not in among the added
   /// elements, returns true if it might be contained
   @override
-  bool contains({required T item}) => bitArray[getHash(item: item) % arraySize];
+  bool contains({required T item}) => bitArray[_getHash(item: item) % arraySize];
 
   /// resets all bits to false
   @override
   void clear() {
     bitArray.clearAll();
-    numberOfElements = 0;
+    _numberOfElements = 0;
   }
 
-  /// [getHash] supports two methods for creating hashes:
+  /// [_getHash] supports two methods for creating hashes:
   /// 1. Dart's default - <object>.hashCode
   /// 2. MurmurHash - It uses a combination of <object>.toString()
   /// and <object>.hashCode to as an input to murmur hash algo
-  int getHash({required T item}) {
+  int _getHash({required T item}) {
     if (murmur) {
       return MurmurHash.v3(item.toString() + item.hashCode.toString(), hashSeed);
     } else {
       return item.hashCode;
     }
   }
-
-  factory BloomFilter.fromJson(Map<String, dynamic> json) => _$BloomFilterFromJson(json);
-
-  Map<String, dynamic> toJson() => _$BloomFilterToJson(this);
 }

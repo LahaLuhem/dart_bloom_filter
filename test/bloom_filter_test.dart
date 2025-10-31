@@ -4,7 +4,8 @@ import 'package:test/test.dart';
 
 void main() {
   group('Contains test', () {
-    final bloomFilter = BloomFilter<String>(10, 0.001)..addAll(items: _defaultItems);
+    final bloomFilter = BloomFilter<String>(_defaultItems.length, 0.001)
+      ..addAll(items: _defaultItems);
 
     test('Element exists', () {
       final doesContain = bloomFilter.contains(item: 'wifi');
@@ -17,13 +18,14 @@ void main() {
   });
 
   group('Merge test', () {
-    const expectedNumberOfElements = 10;
     const falsePositiveProbability = 0.001;
-    final originalBF = BloomFilter<String>(expectedNumberOfElements, falsePositiveProbability)
+    const newItems = ['bluetooth', 'usb', 'ethernet'];
+    final combinedExpectedLength = _defaultItems.length + newItems.length;
+
+    final originalBF = BloomFilter<String>(combinedExpectedLength, falsePositiveProbability)
       ..addAll(items: _defaultItems);
     final originalBFLength = originalBF.length;
-    final newItems = ['bluetooth', 'usb', 'ethernet'];
-    final newBF = BloomFilter<String>(expectedNumberOfElements, falsePositiveProbability)
+    final newBF = BloomFilter<String>(combinedExpectedLength, falsePositiveProbability)
       ..addAll(items: newItems);
     originalBF.merge(newBF);
 
