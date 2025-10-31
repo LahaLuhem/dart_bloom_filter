@@ -116,9 +116,16 @@ final class BloomFilter<T> extends BloomFilterBase<T> {
   /// and <object>.hashCode to as an input to murmur hash algo
   int _getHash({required T item}) {
     if (murmur) {
-      return MurmurHash.v3(item.toString() + item.hashCode.toString(), hashSeed);
+      return MurmurHash.v3(
+        _combineHashes(item.hashCode, item.toString().hashCode).toString(),
+        hashSeed,
+      );
     } else {
       return item.hashCode;
     }
   }
+
+  // Efficient hash combination
+  static int _combineHashes(int hash1, int hash2) =>
+      hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
 }
