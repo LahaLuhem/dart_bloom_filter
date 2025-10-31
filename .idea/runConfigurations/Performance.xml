@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Performance" type="DartTestRunConfigurationType" factoryName="Dart Test">
+    <option name="filePath" value="$PROJECT_DIR$/test/perf/bloom_filter_test.dart" />
+    <method v="2" />
+  </configuration>
+</component>

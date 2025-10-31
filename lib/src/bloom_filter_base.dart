@@ -1,7 +1,7 @@
 abstract class BloomFilterBase<T> {
   void add({required T item});
 
-  void addAll({required List<T> items});
+  void addAll({required Iterable<T> items});
 
   void merge(BloomFilterBase<T> other);
 
