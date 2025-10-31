@@ -92,11 +92,7 @@ final class BloomFilter<T> extends BloomFilterBase<T> {
     );
 
     // Merge the bit arrays using OR operation
-    for (var i = 0; i < arraySize; i++) {
-      if (other.bitArray[i]) {
-        bitArray.setBit(i);
-      }
-    }
+    bitArray.or(other.bitArray);
 
     // Update element count (this is an approximation since there might be overlaps)
     _numberOfElements += other._numberOfElements;

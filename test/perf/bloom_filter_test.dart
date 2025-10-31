@@ -7,13 +7,12 @@ void main() {
   // 1_000_000_000 is infeasible for the Set-implementation while still feasible for Bloom-filters
   const testDataSize = 100_000_000;
   final testData = Iterable.generate(testDataSize, (index) => index);
-  final bloomFilter = BloomFilter<int>(testDataSize, 0.01);
-  final stopwatch = Stopwatch();
 
-  group('Benchmark add', () {
-    stopwatch
-      ..reset()
-      ..start();
+  group('Benchmark default Bloom-filter', () {
+    final bloomFilter = BloomFilter<int>(testDataSize, 0.01);
+
+    // ADD
+    final stopwatch = Stopwatch()..start();
     bloomFilter.addAll(items: testData);
     stopwatch.stop();
 
@@ -24,9 +23,42 @@ void main() {
     print(
       'Operations/sec: ${(testData.length / stopwatch.elapsedMilliseconds * 1000).toStringAsFixed(2)}',
     );
+
+    // CONTAINS
+    stopwatch
+      ..reset()
+      ..start();
+    for (final item in testData) {
+      bloomFilter.contains(item: item);
+    }
+    stopwatch.stop();
+
+    print('\nChecked ${testData.length} items in ${stopwatch.elapsedMilliseconds}ms');
+    print(
+      'Average: ${(stopwatch.elapsedMicroseconds / testData.length).toStringAsFixed(2)} μs per operation',
+    );
+    print(
+      'Operations/sec: ${(testData.length / stopwatch.elapsedMilliseconds * 1000).toStringAsFixed(2)}',
+    );
   });
 
-  group('Benchmark contains', () {
+  group('Murmur default Bloom-filter', () {
+    final bloomFilter = BloomFilter<int>.murmur(testDataSize, 0.01, 42);
+
+    // ADD
+    final stopwatch = Stopwatch()..start();
+    bloomFilter.addAll(items: testData);
+    stopwatch.stop();
+
+    print('\nAdded ${testData.length} items in ${stopwatch.elapsedMilliseconds}ms');
+    print(
+      'Average: ${(stopwatch.elapsedMicroseconds / testData.length).toStringAsFixed(2)} μs per operation',
+    );
+    print(
+      'Operations/sec: ${(testData.length / stopwatch.elapsedMilliseconds * 1000).toStringAsFixed(2)}',
+    );
+
+    // CONTAINS
     stopwatch
       ..reset()
       ..start();
